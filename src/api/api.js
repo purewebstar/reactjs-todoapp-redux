@@ -24,7 +24,7 @@ export const addToDoList = async (data)=>{
 export const removeToDoList = async (data)=>{
     const prevToDoList = getLocalStorage('todolist');
     for(let i=0; i<prevToDoList.length; i++){
-        if(prevToDoList.id == data.id){
+        if(prevToDoList.id === data.id){
             prevToDoList.splice(i,1)        
         }
     }
@@ -42,7 +42,7 @@ export const removeToDoList = async (data)=>{
 export const updateToDoList = async (data)=>{
     const prevToDoList = getLocalStorage('todolist');
     for(let i=0; i<prevToDoList.length; i++){
-        if(prevToDoList.id == data.id){
+        if(prevToDoList.id === data.id){
             prevToDoList.id = data.id;
             prevToDoList.todo = data.todo    
         }

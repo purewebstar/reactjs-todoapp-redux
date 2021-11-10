@@ -22,7 +22,7 @@ const Home = () =>{
  
     const TODOLIST = ()=>{
         for(var i in todo){
-          if(i==todo.length){
+          if(i===todo.length){
              break;
           }
           else{
@@ -51,6 +51,7 @@ const Home = () =>{
      else{
         addToDoList(toDo);
         $('input').val('');
+        getAllTodoList();
      }
  
     } 
