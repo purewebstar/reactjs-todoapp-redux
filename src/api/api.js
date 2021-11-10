@@ -1,40 +1,27 @@
 import { setLocalStorage, getLocalStorage } from "../utils/Storage";
 
 export const fetchToDoList = async () =>{
-    return await(
-        getLocalStorage('todolist').then(res=>{
-            return res;
-        }).catch(err=>{
-            return []
-        })
-    )
+    const res = getLocalStorage('todolist');
+    return res;
 }
 
 export const addToDoList = async (data)=>{
     const prevToDoList = getLocalStorage('todolist');
     if(!prevToDoList || prevToDoList === '' || prevToDoList === []){
-      const newToDo = {id: 0, todo: data.todo};
-      setLocalStorage('todolist', prevToDoList.push(newToDo))
+      const newToDoList = [];
+      setLocalStorage('todolist', data)
     }
     else{
-      const newToDo = {id: (++prevToDoList.id), todo: data.todo};
-      setLocalStorage('todolist', prevToDoList.push(newToDo))
-    }
-    return await(  
-       getLocalStorage('todolist').then(res=>{
-        return res;
-        }).catch(err=>{
-            return []
-        })
-       
-    )
+      setLocalStorage('todolist', data)
+    } 
+
 }
 
 export const removeToDoList = async (data)=>{
     const prevToDoList = getLocalStorage('todolist');
     for(let i=0; i<prevToDoList.length; i++){
         if(prevToDoList.id == data.id){
-            prevToDoList.splice(id,1)        
+            prevToDoList.splice(i,1)        
         }
     }
     setLocalStorage('todolist', prevToDoList)
