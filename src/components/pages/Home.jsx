@@ -1,14 +1,16 @@
 import React from "react";
-import { MDBNavbar, MDBNavbarNav, MDBCollapse, MDBNavItem, MDBNavLink, MDBContainer, MDBMask, MDBView } from 'mdbreact';
+import { MDBNavbar, MDBNavbarNav, MDBCollapse, MDBNavItem, MDBNavLink, MDBContainer, MDBMask, MDBView, MDBRow, MDBCol, MDBCardBody } from 'mdbreact';
 import ToDoList from "../layouts/ToDoList";
 import $ from 'jquery';
 import { useDispatch, useSelector } from "react-redux";
-import {fetchToDoList} from '../../api/api';
+import {fetchToDoList,addToDoList, removeToDoList, updateToDoList} from '../../api/api';
 import {GetAllToDoList} from '../../redux/actions/index';
 
 const Home = () =>{
     const dispatch = useDispatch();
-    const [screenHeight, setScreenHeight] = React.useState(0);
+    const [msg, setMsg] = React.useState(false)
+    const [showMsg, setShowMsg] = React.useState("")
+    const [toDo, setToDo] = React.useState('');
 
     const getAllTodoList = async () =>{
         let todoPayload = await fetchToDoList();
@@ -17,13 +19,55 @@ const Home = () =>{
     
     const todoList = useSelector(state => state.todolist);
     const todo = todoList ? todoList : '';
+ 
+    const TODOLIST = ()=>{
+        for(var i in todo){
+          if(i==todo.length){
+             break;
+          }
+          else{
+              return(
+                 <React.Fragment key={i++}>
+                 <div className=" p-2 z-depth-1">
+                 <b className="text-white">
+                     {todo[i]}
+                 </b>
+                 <div className="float-right">
+                 <i className="fas fa-trash text-danger"></i> <i className="fas fa-edit text-warning"></i>
+                 </div>
+                 </div>
+                 </React.Fragment>
+              )
+          }
+        }
+    }
+    const handleAddToDo = (event)=>{
+     
+     if(toDo === ''){
+         setMsg(true)
+         setShowMsg('Input task is required!')
+         return
+     }
+     else{
+        addToDoList(toDo);
+        $('input').val('');
+     }
+ 
+    } 
+    const handleRemoveToDo = ()=>{
+ 
+    }
+ 
+ 
+     const handleUpdateToDo = ()=>{
+ 
+     }
+ 
     React.useEffect(()=>{
         window.scrollTo(0,0); 
-        var height = $(window).height()
-        setScreenHeight(height)
         $('title').html('Home')
         getAllTodoList();
-    },[setScreenHeight]);
+    },[]);
 
     return(
         <div>
@@ -50,7 +94,72 @@ const Home = () =>{
         </header>
 
         <main style={{marginBottom: '200px'}}>
-           <ToDoList height={screenHeight} todo={todo}/>
+          <MDBContainer fluid className="text-center my-5">
+                <MDBRow>
+                    <MDBCol className>
+                        <h1 className="h2-responsive text-info">Manage Your Tasks Here!</h1>
+                    </MDBCol>
+                </MDBRow>
+            </MDBContainer>
+            <MDBContainer fluid>
+                <MDBRow>
+                    <MDBCol md="2"></MDBCol>
+                    <MDBCol md="8" size="12"  className="elegant-color-dark">                          
+                        <div>
+                        <MDBRow className=" mt-5 ">
+                            <MDBCol md="2"></MDBCol>
+                            <MDBCol md="8" size="12">
+                            {
+                            msg ? 
+                            <h3 className="h3-responsive font-weight-bold text-danger text-center">
+                                {showMsg}
+                            </h3>
+                            :
+                            <div style={{display: 'none'}}>
+                                </div>
+                            }
+                            </MDBCol>
+                            <MDBCol md="2"></MDBCol>
+                            </MDBRow>
+                            <MDBCardBody className="d-flex justify-content-centermb-5">                           
+                                <input type="todo" className="form-control elegant-color-dark w-100 text-warning mt-2"
+                                style={{position: 'relative'}}
+                                onChange={e=> setToDo(e.target.value)}
+                                />
+                                <button className="btn btn-info font-weight-bold btn-md"
+                                style={{marginLeft: '-1px', borderRadius: '10px'}}
+                                onClick={handleAddToDo}
+                                >Add
+                                </button>
+                            </MDBCardBody>
+                        </div>
+                        <MDBRow>
+                            <MDBCol md="1"></MDBCol>
+                            <MDBCol md="10" size="12" className="mb-4">
+                               <div className="bg-dark">
+                                   {
+                                      Object.entries(todo).map((t, i)=>{
+            
+                                        if(i >= todo.count){
+                                          return(
+                                            <div>
+                           
+                                            </div>
+                                          )
+                                        }
+                                        else{
+                                         return(
+                                           <ToDoList todo={todo} count={todo.length} index={i}/>
+                                         )
+                                        }
+                                    })
+                                   }
+                               </div>
+                            </MDBCol>
+                        </MDBRow>
+                    </MDBCol>
+                </MDBRow>
+            </MDBContainer>
         </main>
       </div>
     )

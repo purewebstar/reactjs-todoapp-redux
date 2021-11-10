@@ -9,10 +9,14 @@ export const addToDoList = async (data)=>{
     const prevToDoList = getLocalStorage('todolist');
     if(!prevToDoList || prevToDoList === '' || prevToDoList === []){
       const newToDoList = [];
-      setLocalStorage('todolist', data)
+      newToDoList.push(data)
+      setLocalStorage('todolist', newToDoList)
     }
     else{
-      setLocalStorage('todolist', data)
+       prevToDoList.push(data)
+      setLocalStorage('todolist', prevToDoList)
+      const res = getLocalStorage('todolist');
+      return res;
     } 
 
 }
