@@ -4,13 +4,13 @@ import $ from 'jquery';
 import { useDispatch, useSelector } from "react-redux";
 import {fetchToDoList,addToDoList, removeToDoList, updateToDoList} from '../../api/api';
 import {GetAllToDoList} from '../../redux/actions/index';
-import ToDoList from "../layouts/ToDoList";
 
 const Home = () =>{
     const dispatch = useDispatch();
     const [msg, setMsg] = React.useState(false)
     const [showMsg, setShowMsg] = React.useState("")
     const [toDo, setToDo] = React.useState('');
+    const[loading, setLoading] = React.useState(false);
 
     const getAllTodoList = async () =>{
         let todoPayload = await fetchToDoList();
@@ -34,6 +34,17 @@ const Home = () =>{
      }
  
     } 
+
+    const handleRemoveToDo = (index)=>{
+      setLoading(true);
+      removeToDoList(index);
+      setTimeout(()=>{
+        getAllTodoList();
+        setLoading(false)
+      }, 500);
+    } 
+
+
     const handleUpdateToDo = (i)=>{
       // event.preventDefault();
       const index = $('input.update').attr('index');
@@ -157,21 +168,22 @@ const Home = () =>{
                                         }
                                         else{
                                          return(
-                                          <>
-                                          <div className=" p-2 z-depth-1" >
-                                          <b className="text-white p-2">
-                                              {todo[i].substr(0,40)}
-                                          </b> 
-                                          <div className="float-right">
-                                          <i className="fas fa-trash text-danger fa-lg" value={i}
-                                          
-                                          ></i> 
-                                          &nbsp;&nbsp;<i className="fas fa-edit text-warning fa-lg"
-                                          onClick={e =>handleUpdate(todo[i], i)}
-                                          ></i>
-                                          </div>
-                                          </div>
-                                         </>
+                                            <>
+                                            <div className="list p-2 z-depth-1">
+                                            <b className="text-white p-2">
+                                                {todo[i].substr(0,40)}
+                                            </b> 
+                                            <div className="float-right">
+                                            <i className="fas fa-trash text-danger fa-lg" value={i}
+                                            onClick={e => handleRemoveToDo(i)}
+                                            ></i> 
+                                            &nbsp;&nbsp;<i className="fas fa-edit text-warning fa-lg"
+                                              onClick={e =>handleUpdate(todo[i], i)}
+                                            ></i>
+                                            </div>
+                                            </div>
+                                            </>
+                                        
                                          )
                                         }
                                     })
