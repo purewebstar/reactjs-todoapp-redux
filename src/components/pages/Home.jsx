@@ -34,6 +34,30 @@ const Home = () =>{
      }
  
     } 
+    const handleUpdateToDo = (i)=>{
+      // event.preventDefault();
+      const index = $('input.update').attr('index');
+      const data = $('input.update').val();
+      if(data === ''){
+        setMsg(true)
+        setShowMsg('Input task is required!')
+        return
+    }
+    else{
+       updateToDoList(data, index);
+       $('input').val('');
+       $('.updateList').removeClass('d-flex').hide();
+       getAllTodoList();
+    }
+   
+    } 
+
+    const handleUpdate = (todo,i)=>{
+      $('.updateList').show().addClass('d-flex');   
+      $('input.update').val(todo);
+      $('input.update').attr('index', i)
+      $('input.update').val(todo);
+    }
 
  
     React.useEffect(()=>{
@@ -93,8 +117,8 @@ const Home = () =>{
                             </MDBCol>
                             <MDBCol md="2"></MDBCol>
                             </MDBRow>
-                            <MDBCardBody className="d-flex justify-content-centermb-5">                           
-                                <input type="todo" className="form-control elegant-color-dark w-100 text-warning mt-2"
+                            <MDBCardBody className="addList d-flex justify-content-center mb-5">                           
+                                <input type="text" className="add form-control elegant-color-dark w-100 text-warning mt-2"
                                 style={{position: 'relative'}}
                                 onChange={e=> setToDo(e.target.value)}
                                 />
@@ -104,12 +128,24 @@ const Home = () =>{
                                 >Add
                                 </button>
                             </MDBCardBody>
+                            <MDBCardBody className="updateList justify-content-center mb-5" style={{display:'none'}}>                           
+                                <input type="text" className="update form-control elegant-color-dark w-100 text-warning mt-2"
+                                style={{position: 'relative'}}
+                                onChange={e=> setToDo(e.target.value)}
+                                />
+                                <button className="btn btn-info font-weight-bold btn-md"
+                                style={{marginLeft: '-1px', borderRadius: '10px'}}
+                                onClick={handleUpdateToDo}
+                                >Edit
+                                </button>
+                            </MDBCardBody>
                         </div>
                         <MDBRow>
                             <MDBCol md="1"></MDBCol>
                             <MDBCol md="10" size="12" className="mb-4">
                                <div className="bg-dark">
                                    {
+                                
                                       Object.entries(todo).map((t, i)=>{
             
                                         if(i >= todo.count){
@@ -121,7 +157,21 @@ const Home = () =>{
                                         }
                                         else{
                                          return(
-                                           <ToDoList todo={todo} count={todo.length} index={i} key={i} getAllList={getAllTodoList}/>
+                                          <>
+                                          <div className=" p-2 z-depth-1" >
+                                          <b className="text-white p-2">
+                                              {todo[i].substr(0,40)}
+                                          </b> 
+                                          <div className="float-right">
+                                          <i className="fas fa-trash text-danger fa-lg" value={i}
+                                          
+                                          ></i> 
+                                          &nbsp;&nbsp;<i className="fas fa-edit text-warning fa-lg"
+                                          onClick={e =>handleUpdate(todo[i], i)}
+                                          ></i>
+                                          </div>
+                                          </div>
+                                         </>
                                          )
                                         }
                                     })
