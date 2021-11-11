@@ -169,7 +169,7 @@ const Home = () =>{
                                         else{
                                          return(
                                             <>
-                                            <div className="list p-2 z-depth-1">
+                                            <div className="list p-2 z-depth-1" key={i}>
                                             <b className="text-white p-2">
                                                 {todo[i].substr(0,40)}
                                             </b> 
