@@ -11,6 +11,8 @@ export const addToDoList = async (data)=>{
       const newToDoList = [];
       newToDoList.push(data)
       setLocalStorage('todolist', newToDoList)
+      const res = getLocalStorage('todolist');
+      return res;
     }
     else{
        prevToDoList.push(data)
@@ -21,38 +23,26 @@ export const addToDoList = async (data)=>{
 
 }
 
-export const removeToDoList = async (data)=>{
+export const removeToDoList = async (index)=>{
     const prevToDoList = getLocalStorage('todolist');
     for(let i=0; i<prevToDoList.length; i++){
-        if(prevToDoList.id === data.id){
+        if(prevToDoList[i] === prevToDoList[index]){
             prevToDoList.splice(i,1)        
         }
     }
     setLocalStorage('todolist', prevToDoList)
-    return await(
-       
-       getLocalStorage('todolist').then(res=>{
-           return res;
-        }).catch(err=>{
-            return []
-        })
-    )
+      const res = getLocalStorage('todolist');
+      return res;
 }
 
-export const updateToDoList = async (data)=>{
+export const updateToDoList = async (data, index)=>{
     const prevToDoList = getLocalStorage('todolist');
     for(let i=0; i<prevToDoList.length; i++){
-        if(prevToDoList.id === data.id){
-            prevToDoList.id = data.id;
-            prevToDoList.todo = data.todo    
+        if(prevToDoList[i] === prevToDoList[index]){
+            prevToDoList[i] = data  
         }
     }
     setLocalStorage('todolist', prevToDoList)
-    return await(
-        getLocalStorage('todolist').then(res=>{
-            return res;
-         }).catch(err=>{
-             return []
-         })
-    )
+    const res = getLocalStorage('todolist');
+    return res;
 }

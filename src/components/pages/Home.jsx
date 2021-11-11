@@ -1,10 +1,10 @@
 import React from "react";
 import { MDBNavbar, MDBNavbarNav, MDBCollapse, MDBNavItem, MDBNavLink, MDBContainer, MDBMask, MDBView, MDBRow, MDBCol, MDBCardBody } from 'mdbreact';
-import ToDoList from "../layouts/ToDoList";
 import $ from 'jquery';
 import { useDispatch, useSelector } from "react-redux";
 import {fetchToDoList,addToDoList, removeToDoList, updateToDoList} from '../../api/api';
 import {GetAllToDoList} from '../../redux/actions/index';
+import ToDoList from "../layouts/ToDoList";
 
 const Home = () =>{
     const dispatch = useDispatch();
@@ -19,30 +19,9 @@ const Home = () =>{
     
     const todoList = useSelector(state => state.todolist);
     const todo = todoList ? todoList : '';
- 
-    const TODOLIST = ()=>{
-        for(var i in todo){
-          if(i===todo.length){
-             break;
-          }
-          else{
-              return(
-                 <React.Fragment key={i++}>
-                 <div className=" p-2 z-depth-1">
-                 <b className="text-white">
-                     {todo[i]}
-                 </b>
-                 <div className="float-right">
-                 <i className="fas fa-trash text-danger"></i> <i className="fas fa-edit text-warning"></i>
-                 </div>
-                 </div>
-                 </React.Fragment>
-              )
-          }
-        }
-    }
+
     const handleAddToDo = (event)=>{
-     
+    // event.preventDefault();
      if(toDo === ''){
          setMsg(true)
          setShowMsg('Input task is required!')
@@ -55,18 +34,10 @@ const Home = () =>{
      }
  
     } 
-    const handleRemoveToDo = ()=>{
- 
-    }
- 
- 
-     const handleUpdateToDo = ()=>{
- 
-     }
+
  
     React.useEffect(()=>{
-        window.scrollTo(0,0); 
-        $('title').html('Home')
+        $('title').html('ToDo App')
         getAllTodoList();
     },[]);
 
@@ -89,7 +60,7 @@ const Home = () =>{
             <MDBMask overlay="black-strong" className="flex-center flex-column text-white text-center">
               <h2 className="h1-responsive text-white font-weight-bold" style={{marginTop: '-100px'}}>Welcome!</h2>
               <h2 className="h4-responsive text-white font-weight-bold mt-2">Here is your simple<b className="text-warning"> ToDo</b> App.</h2>
-              <h2 className="h1-responsive text-white font-weight-bold" style={{marginTop: '100px'}}>You have ( <b className="text-warning">0</b> ) list</h2>
+              <h2 className="h1-responsive text-white font-weight-bold" style={{marginTop: '100px'}}>You have ( <b className="text-warning">{todo.length}</b> ) list</h2>
             </MDBMask>
           </MDBView>
         </header>
@@ -97,7 +68,7 @@ const Home = () =>{
         <main style={{marginBottom: '200px'}}>
           <MDBContainer fluid className="text-center my-5">
                 <MDBRow>
-                    <MDBCol className>
+                    <MDBCol className="">
                         <h1 className="h2-responsive text-info">Manage Your Tasks Here!</h1>
                     </MDBCol>
                 </MDBRow>
@@ -150,7 +121,7 @@ const Home = () =>{
                                         }
                                         else{
                                          return(
-                                           <ToDoList todo={todo} count={todo.length} index={i}/>
+                                           <ToDoList todo={todo} count={todo.length} index={i} key={i} getAllList={getAllTodoList}/>
                                          )
                                         }
                                     })
