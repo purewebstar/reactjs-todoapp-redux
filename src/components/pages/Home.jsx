@@ -1,9 +1,11 @@
 import React from "react";
-import { MDBNavbar, MDBNavbarNav, MDBCollapse, MDBNavItem, MDBNavLink, MDBContainer, MDBMask, MDBView, MDBRow, MDBCol, MDBCardBody } from 'mdbreact';
+import { MDBNavbar, MDBNavbarNav, MDBCollapse, MDBNavItem, MDBNavLink, MDBContainer, MDBMask, MDBView, MDBRow, MDBCol, MDBCardBody
+, MDBPagination, MDBPageItem, MDBPageNav } from 'mdbreact';
 import $ from 'jquery';
 import { useDispatch, useSelector } from "react-redux";
 import {fetchToDoList,addToDoList, removeToDoList, updateToDoList} from '../../api/api';
 import {GetAllToDoList} from '../../redux/actions/index';
+//import Pagination from '../layouts/Pagination'
 
 const Home = () =>{
     const dispatch = useDispatch();
@@ -11,7 +13,8 @@ const Home = () =>{
     const [showMsg, setShowMsg] = React.useState("")
     const [toDo, setToDo] = React.useState('');
     const[loading, setLoading] = React.useState(false);
-
+    const[firstItemIndex, setFirstItemIndex] = React.useState(0)
+    
     const getAllTodoList = async () =>{
         let todoPayload = await fetchToDoList();
         dispatch(GetAllToDoList(todoPayload));
@@ -19,7 +22,15 @@ const Home = () =>{
     
     const todoList = useSelector(state => state.todolist);
     const todo = todoList ? todoList : '';
-
+    const numOfPages = ()=>{
+      if(todo.length >4){
+        let mdls = todo.length % 4;
+        if(mdls>0) return ~~((todo.length/4) + 1);
+        else return ~~(todo.length/4);
+      }else{
+        return 1;
+      }
+    }
     const handleAddToDo = (event)=>{
     // event.preventDefault();
      if(toDo === ''){
@@ -75,6 +86,63 @@ const Home = () =>{
         $('title').html('ToDo App')
         getAllTodoList();
     },[]);
+
+    const handleTodoPage = (e)=>{
+      e.preventDefault();
+      const index = $('input.page-index').val();
+      const pwr = (index-1)
+      const firstItemIndex = (3**pwr) - 1;
+      setFirstItemIndex(firstItemIndex);
+      $('div.default-list').hide();
+      $('div.pagination-list').show();
+    }
+
+    const Pagination = ({pages,todo}) => {
+      let p = pages();
+    
+      return (
+        <MDBRow>
+          <MDBCol className="elegant-color-dark mt-5">  
+            <MDBPagination circle>
+               <MDBPageItem>
+                  <MDBPageNav className="page-link bg-white" aria-label="Previous" index={0}>
+                    &laquo;
+                  </MDBPageNav>
+                 </MDBPageItem>
+              {
+                Object.entries(todo).map((t,i)=>{
+
+                  if(i >=p){
+                    return(
+                      ''
+                    )
+                  }
+                  else{
+                    return(
+                      <div>
+                      <MDBPageItem>
+                      <MDBPageNav className="page-link bg-warning"
+                      onClick={handleTodoPage}
+                      >
+                      <input type="hidden" value={++i} className="page-index"/>
+                      {i}
+                      </MDBPageNav>
+                       </MDBPageItem>
+                      </div>
+                    )
+                  }
+                })
+              }        
+               <MDBPageItem>
+                  <MDBPageNav className="page-link bg-white" index={p-1}>
+                      &raquo;
+                  </MDBPageNav>
+                  </MDBPageItem>                                          
+            </MDBPagination>
+          </MDBCol>
+        </MDBRow>
+        )
+    }
 
     return(
         <div>
@@ -154,7 +222,7 @@ const Home = () =>{
                         <MDBRow>
                             <MDBCol md="1"></MDBCol>
                             <MDBCol md="10" size="12" className="mb-4">
-                               <div className="bg-dark">
+                               <div className="bg-dark default-list">
                                    {
                                 
                                       Object.entries(todo).map((t, i)=>{
@@ -188,7 +256,45 @@ const Home = () =>{
                                         }
                                     })
                                    }
+                                  
                                </div>
+                               <div className="bg-dark pagination-list" style={{display:'none'}}>
+                                   {
+                                
+                                      Object.entries(todo).map((t, i)=>{
+                                        let newIndex = firstItemIndex;
+                                        if(i >= todo.count || i > (newIndex+3)){
+                                          return(
+                                            <div>
+                           
+                                            </div>
+                                          )
+                                        }
+                                        else{
+                                         return(
+                                            <>
+                                            <div className="list p-2 z-depth-1" key={newIndex}>
+                                            <b className="text-white p-2">
+                                                {todo[i].substr(0,40)}
+                                            </b> 
+                                            <div className="float-right">
+                                            <i className="fas fa-trash text-danger fa-lg" value={i}
+                                            onClick={e => handleRemoveToDo(i)}
+                                            ></i> 
+                                            &nbsp;&nbsp;<i className="fas fa-edit text-warning fa-lg"
+                                              onClick={e =>handleUpdate(todo[i], i)}
+                                            ></i>
+                                            </div>
+                                            </div>
+                                            </>
+                                        
+                                         )
+                                        }
+                                    })
+                                   }
+                                  
+                               </div>
+                               <Pagination pages={numOfPages} todo={todo}/>
                             </MDBCol>
                         </MDBRow>
                     </MDBCol>

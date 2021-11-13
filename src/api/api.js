@@ -5,6 +5,7 @@ export const fetchToDoList = async () =>{
     return res;
 }
 
+
 export const addToDoList = async (data)=>{
     const prevToDoList = getLocalStorage('todolist');
     if(!prevToDoList || prevToDoList === '' || prevToDoList === []){
